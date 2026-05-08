@@ -11,7 +11,7 @@
             Start = start;
         }
 
-        public static Result<Duration> CreateDuration(DateTime start, DateTime end)
+        public static Result<Duration> Create(DateTime start, DateTime end)
         {
             if (start >= end)
             {
