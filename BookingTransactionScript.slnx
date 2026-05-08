@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="BookingTransactionScript.Core/BookingTransactionScript.Core.csproj" />
+  <Project Path="BookingTransactionScript.Test/BookingTransactionScript.Test.csproj" />
+</Solution>
