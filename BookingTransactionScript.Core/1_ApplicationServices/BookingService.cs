@@ -12,23 +12,13 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
             _bookingRepository = bookingRepository;
         }
 
-        public async Task<Result> BookAsync(DateTime start, DateTime end)
+        public async Task<Result<Booking>> BookAsync(DateTime start, DateTime end)
         {
-            if (start >= end)
+            var durationResult = Duration.Create(start, end);
+            if (!durationResult.IsSuccess)
             {
-                return Result.Fail("Start must be before end.");
+                return Result<Booking>.Fail(durationResult.ErrorMessage!);
             }
-
-            if (start.Minute != 0 || end.Minute != 0)
-            {
-                return Result.Fail("Only whole hours can be booked.");
-            }
-
-            if (start.Hour < 8 || end.Hour > 16)
-            {
-                return Result.Fail("Booking must be within opening hours.");
-            }
-
             var existingBookings = await _bookingRepository.GetAllAsync();
 
             foreach (var existing in existingBookings)
@@ -37,7 +27,7 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
 
                 if (overlaps)
                 {
-                    return Result.Fail("Booking overlaps with an existing booking.");
+                    return Result<Booking>.Fail("Booking overlaps with an existing booking.");
                 }
             }
 
@@ -51,7 +41,7 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
 
             await _bookingRepository.AddAsync(booking);
 
-            return Result.Success();
+            return Result<Booking>.Success(booking);
         }
     }
 }

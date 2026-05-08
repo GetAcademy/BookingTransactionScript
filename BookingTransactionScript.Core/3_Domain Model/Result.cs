@@ -1,17 +1,24 @@
 ﻿namespace BookingTransactionScript.Core._3_Domain_Model
 {
-    public class Result
+    public class Result<T>
     {
         public bool IsSuccess { get; }
         public string? ErrorMessage { get; }
+        public T? Value { get; }
 
-        public Result(bool isSuccess, string? errorMessage = null)
+        public Result(T value)
         {
-            IsSuccess = isSuccess;
+            IsSuccess = true;
+            Value = value;
+        }
+
+        public Result(string errorMessage)
+        {
+            IsSuccess = false;
             ErrorMessage = errorMessage;
         }
 
-        public static Result Success() => new(true);
-        public static Result Fail(string errorMessage) => new(false, errorMessage);
+        public static Result<T> Success(T value) => new(value);
+        public static Result<T> Fail(string errorMessage) => new(errorMessage);
     }
 }
