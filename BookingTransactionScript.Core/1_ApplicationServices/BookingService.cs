@@ -1,4 +1,7 @@
-﻿namespace BookingTransactionScript.Core
+﻿using BookingTransactionScript.Core._2_DomainServices;
+using BookingTransactionScript.Core._3_Domain_Model;
+
+namespace BookingTransactionScript.Core._1_ApplicationServices
 {
     public class BookingService
     {
@@ -9,24 +12,24 @@
             _bookingRepository = bookingRepository;
         }
 
-        public async Task<string> BookAsync(DateTime start, DateTime end)
+        public async Task<Result> BookAsync(DateTime start, DateTime end)
         {
-            var existingBookings = await _bookingRepository.GetAllAsync();
-
             if (start >= end)
             {
-                return "Start must be before end.";
+                return Result.Fail("Start must be before end.");
             }
 
             if (start.Minute != 0 || end.Minute != 0)
             {
-                return "Only whole hours can be booked.";
+                return Result.Fail("Only whole hours can be booked.");
             }
 
             if (start.Hour < 8 || end.Hour > 16)
             {
-                return "Booking must be within opening hours.";
+                return Result.Fail("Booking must be within opening hours.");
             }
+
+            var existingBookings = await _bookingRepository.GetAllAsync();
 
             foreach (var existing in existingBookings)
             {
@@ -34,7 +37,7 @@
 
                 if (overlaps)
                 {
-                    return "Booking overlaps with an existing booking.";
+                    return Result.Fail("Booking overlaps with an existing booking.");
                 }
             }
 
@@ -48,21 +51,7 @@
 
             await _bookingRepository.AddAsync(booking);
 
-            return "Booking created.";
+            return Result.Success();
         }
-    }
-
-    public interface IBookingRepository
-    {
-        Task<List<Booking>> GetAllAsync();
-        Task AddAsync(Booking booking);
-    }
-
-    public class Booking
-    {
-        public Guid Id { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
-        public bool IsCancelled { get; set; }
     }
 }
