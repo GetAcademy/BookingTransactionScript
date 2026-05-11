@@ -37,6 +37,8 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
             {
                 return Result<Booking>.Fail("Booking overlaps with an existing booking.");
             }
+
+            return Result<Booking>.Success(null);
         }
     }
 }
