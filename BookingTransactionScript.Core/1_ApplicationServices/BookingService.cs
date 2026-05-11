@@ -14,16 +14,20 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
 
         public async Task<Result<Booking>> BookAsync(DateTime start, DateTime end)
         {
-            var durationResult = Duration.Create(start, end);
-            if (!durationResult.IsSuccess)
+            var bookingPeriodResult = BookingPeriod.Create(start, end);
+            if (!bookingPeriodResult.IsSuccess)
             {
-                return Result<Booking>.Fail(durationResult.ErrorMessage!);
+                return Result<Booking>.Fail(bookingPeriodResult.ErrorMessage!);
             }
+
+            var bookingPeriod = bookingPeriodResult.Value!;
             var existingBookings = await _bookingRepository.GetAllAsync();
 
             foreach (var existing in existingBookings)
             {
-                var overlaps = start < existing.End && end > existing.Start;
+                var overlaps = existing.IsOverlapping(bookingPeriod);
+                //var overlap = existing.IsOverlapping(start, end);
+                //var overlaps = start < existing.End && end > existing.Start;
 
                 if (overlaps)
                 {
