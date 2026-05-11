@@ -22,29 +22,14 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
 
             var bookingPeriod = bookingPeriodResult.Value!;
             var existingBookings = await _bookingRepository.GetAllAsync();
-
-            foreach (var booking in existingBookings)
+            var bookingCollection = new BookingCollection(existingBookings);
+            if (bookingCollection.IsOverlapping(bookingPeriod))
             {
-                var overlaps = bookingPeriod.IsOverlapping(booking);
-                //var overlap = existing.IsOverlapping(start, end);
-                //var overlaps = start < existing.End && end > existing.Start;
-
-                if (overlaps)
-                {
-                    return Result<Booking>.Fail("Booking overlaps with an existing booking.");
-                }
+                return Result<Booking>.Fail("Booking overlaps with an existing booking.");
             }
 
-            var newBooking = new Booking
-            {
-                Id = Guid.NewGuid(),
-                Start = start,
-                End = end,
-                IsCancelled = false
-            };
-
+            var newBooking = new Booking(start, end);
             await _bookingRepository.AddAsync(newBooking);
-
             return Result<Booking>.Success(newBooking);
         }
     }
