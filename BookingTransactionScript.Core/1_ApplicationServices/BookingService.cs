@@ -14,6 +14,16 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
 
         public async Task<Result<Booking>> BookAsync(DateTime start, DateTime end)
         {
+            var validationResult = await ValidateBooking(start, end);
+            if (!validationResult.IsSuccess) return validationResult;
+
+            var newBooking = new Booking(start, end);
+            await _bookingRepository.AddAsync(newBooking);
+            return Result<Booking>.Success(newBooking);
+        }
+
+        private async Task<Result<Booking>> ValidateBooking(DateTime start, DateTime end)
+        {
             var bookingPeriodResult = BookingPeriod.Create(start, end);
             if (!bookingPeriodResult.IsSuccess)
             {
@@ -27,10 +37,6 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
             {
                 return Result<Booking>.Fail("Booking overlaps with an existing booking.");
             }
-
-            var newBooking = new Booking(start, end);
-            await _bookingRepository.AddAsync(newBooking);
-            return Result<Booking>.Success(newBooking);
         }
     }
 }
