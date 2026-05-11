@@ -31,5 +31,16 @@
             var duration = new BookingPeriod(start, end);
             return Result<BookingPeriod>.Success(duration);
         }
+
+        public bool IsOverlapping(Booking booking)
+        {
+            return IsOverlapping(booking.Start, booking.End);
+        }
+
+        public bool IsOverlapping(DateTime start, DateTime end)
+        {
+            return start < End && end > Start;
+        }
     }
 }
+ 

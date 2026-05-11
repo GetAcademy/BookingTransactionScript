@@ -25,7 +25,7 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
 
             foreach (var booking in existingBookings)
             {
-                var overlaps = booking.IsOverlapping(bookingPeriod);
+                var overlaps = bookingPeriod.IsOverlapping(booking);
                 //var overlap = existing.IsOverlapping(start, end);
                 //var overlaps = start < existing.End && end > existing.Start;
 
