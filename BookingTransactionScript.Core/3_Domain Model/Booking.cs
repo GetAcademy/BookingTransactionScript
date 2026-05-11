@@ -9,17 +9,13 @@
 
         public bool IsOverlapping(BookingPeriod bookingPeriod)
         {
-            return bookingPeriod.Start < End && bookingPeriod.End > Start;
+            //return bookingPeriod.Start < End && bookingPeriod.End > Start;
+            return IsOverlapping(bookingPeriod.Start, bookingPeriod.End);
         }
 
         public bool IsOverlapping(DateTime start, DateTime end)
         {
             return start < End && end > Start;
         }
-
-        //public bool IsOverlapping(DateTime start, DateTime end)
-        //{
-        //    return start < End && end > Start;
-        //}
     }
 }

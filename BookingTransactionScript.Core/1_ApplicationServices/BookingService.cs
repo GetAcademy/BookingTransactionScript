@@ -23,9 +23,9 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
             var bookingPeriod = bookingPeriodResult.Value!;
             var existingBookings = await _bookingRepository.GetAllAsync();
 
-            foreach (var existing in existingBookings)
+            foreach (var booking in existingBookings)
             {
-                var overlaps = existing.IsOverlapping(bookingPeriod);
+                var overlaps = booking.IsOverlapping(bookingPeriod);
                 //var overlap = existing.IsOverlapping(start, end);
                 //var overlaps = start < existing.End && end > existing.Start;
 
@@ -35,7 +35,7 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
                 }
             }
 
-            var booking = new Booking
+            var newBooking = new Booking
             {
                 Id = Guid.NewGuid(),
                 Start = start,
@@ -43,9 +43,9 @@ namespace BookingTransactionScript.Core._1_ApplicationServices
                 IsCancelled = false
             };
 
-            await _bookingRepository.AddAsync(booking);
+            await _bookingRepository.AddAsync(newBooking);
 
-            return Result<Booking>.Success(booking);
+            return Result<Booking>.Success(newBooking);
         }
     }
 }
